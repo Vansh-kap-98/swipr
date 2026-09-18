@@ -2,7 +2,6 @@ node_modules/
 .next/
 out/
 next-env.d.ts
-public/downloads/
 public/favicon.ico
 public/site.webmanifest
 *.tsbuildinfo

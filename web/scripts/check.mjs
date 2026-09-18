@@ -71,6 +71,25 @@ for (const file of pages) {
 // Every indexable page must be in the sitemap, and every sitemap URL must exist.
 // (Next writes 404.html, 404/ and _not-found/ for the same not-found page.)
 const indexable = pages.filter((file) => !/name="robots" content="noindex/.test(readFileSync(file, 'utf8')));
+// If a page offers an APK, the file must actually be in this build and really
+// be an APK. Without this, a deploy can serve its 404 page under the .apk name
+// and every visitor gets "Download failed".
+const apkLinks = new Set(
+  pages.flatMap((file) => [...readFileSync(file, 'utf8').matchAll(/href="([^"]+\.apk)"/g)].map((m) => m[1])),
+);
+for (const link of apkLinks) {
+  if (/^https?:/.test(link)) continue; // hosted elsewhere; can't verify from here
+  const file = join(out, link);
+  if (!existsSync(file)) {
+    fail('downloads', `${link} is linked but missing from out/ — it would 404`);
+    continue;
+  }
+  const head = readFileSync(file).subarray(0, 2).toString('latin1');
+  if (head !== 'PK') fail('downloads', `${link} is not an APK (starts with "${head}")`);
+  const mb = statSync(file).size / 1024 / 1024;
+  if (mb < 1) fail('downloads', `${link} is only ${mb.toFixed(2)} MB — probably not the real app`);
+}
+
 const sitemap = readFileSync(join(out, 'sitemap.xml'), 'utf8');
 const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 if (urls.length !== indexable.length) {

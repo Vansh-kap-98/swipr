@@ -35,13 +35,17 @@ if (apkEnabled && apkSource) {
       sizeMb: (bytes.length / 1024 / 1024).toFixed(1),
       sha256: createHash('sha256').update(bytes).digest('hex'),
     };
-  } else if (existsSync(join(root, 'lib/build-info.json'))) {
-    // No local APK (a deploy host building from git, for example): keep what the
-    // last local build recorded, so the download link and checksum still show.
+  } else if (externalUrl && existsSync(join(root, 'lib/build-info.json'))) {
+    // No local APK, but the file is hosted elsewhere: reuse the size and
+    // checksum recorded by the last local build. Only safe when the link
+    // points off-site — otherwise it would advertise a file this deploy
+    // doesn't contain.
     apk = JSON.parse(readFileSync(join(root, 'lib/build-info.json'), 'utf8')).apk ?? { enabled: false };
-    console.warn(`! APK not found at ${from} — reusing the details from lib/build-info.json.`);
+    console.warn(`! APK not found at ${from} — linking to ${externalUrl} with the last recorded size/checksum.`);
   } else {
-    console.warn(`! APK not found at ${from} — the direct download will show as unavailable.`);
+    console.warn(`! APK not found at ${from}`);
+    console.warn('  The direct download is hidden rather than linking to a file this deploy lacks.');
+    console.warn('  Either commit web/public/downloads/, or set apk.externalUrl in site.config.ts.');
   }
 }
 
