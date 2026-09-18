@@ -44,6 +44,12 @@ class CardStack extends StatefulWidget {
 }
 
 class _CardStackState extends State<CardStack> with SingleTickerProviderStateMixin {
+  /// The top card's displacement from the middle. Held in a [ValueNotifier]
+  /// rather than widget state so a drag frame only re-runs the small transform
+  /// builders — the photos themselves are passed through as `child` and are
+  /// never rebuilt while swiping.
+  final ValueNotifier<Offset> _offset = ValueNotifier(Offset.zero);
+
   /// Drives a 0→1 interpolation between [_from] and [_to]. Unbounded so a
   /// spring may overshoot slightly without being clamped into a hard stop.
   late final AnimationController _anim = AnimationController.unbounded(vsync: this)..addListener(_onTick);
@@ -52,7 +58,6 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
   /// home instead of bouncing.
   static final _spring = SpringDescription.withDampingRatio(mass: 1, stiffness: 420, ratio: 1);
 
-  Offset _offset = Offset.zero;
   Offset _from = Offset.zero;
   Offset _to = Offset.zero;
   bool _animating = false;
@@ -85,12 +90,12 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
   void dispose() {
     if (widget.controller._state == this) widget.controller._state = null;
     _anim.dispose();
+    _offset.dispose();
     super.dispose();
   }
 
   void _onTick() {
-    if (!_animating) return;
-    setState(() => _offset = Offset.lerp(_from, _to, _anim.value)!);
+    if (_animating) _offset.value = Offset.lerp(_from, _to, _anim.value)!;
   }
 
   void _stop() {
@@ -100,7 +105,7 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
 
   /// Timed slide toward [target]. Returns false if interrupted.
   Future<bool> _slideTo(Offset target, {required Duration duration, required Curve curve}) async {
-    _from = _offset;
+    _from = _offset.value;
     _to = target;
     _animating = true;
     _anim.value = 0;
@@ -115,7 +120,7 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
   /// Spring toward [target], starting at the finger's release [velocity] so
   /// there's no jolt between dragging and settling.
   Future<void> _springTo(Offset target, Offset velocity) async {
-    _from = _offset;
+    _from = _offset.value;
     _to = target;
     final delta = _to - _from;
     final distanceSq = delta.distanceSquared;
@@ -139,13 +144,13 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
 
   void _onPanUpdate(DragUpdateDetails d) {
     if (_flying) return;
-    setState(() => _offset += d.delta);
+    _offset.value += d.delta;
   }
 
   void _onPanEnd(DragEndDetails d) {
     if (_flying) return;
     final velocity = d.velocity.pixelsPerSecond;
-    final decision = SwipePhysics.resolve(dx: _offset.dx, velocityX: velocity.dx, width: _size.width);
+    final decision = SwipePhysics.resolve(dx: _offset.value.dx, velocityX: velocity.dx, width: _size.width);
     if (decision == null) {
       _springTo(Offset.zero, velocity);
     } else {
@@ -164,7 +169,7 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
 
     final sign = decision == Decision.keep ? 1.0 : -1.0;
     final exitX = sign * _size.width * 1.4;
-    final remaining = (exitX - _offset.dx).abs();
+    final remaining = (exitX - _offset.value.dx).abs();
 
     final Duration duration;
     final Curve curve;
@@ -175,24 +180,22 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
       final seconds = (remaining / velocity.dx.abs()).clamp(0.12, 0.35);
       duration = Duration(microseconds: (seconds * 1e6).round());
       curve = Curves.linear;
-      exitY = _offset.dy + velocity.dy * seconds;
+      exitY = _offset.value.dy + velocity.dy * seconds;
     } else {
       // Button or slow release: accelerate away from rest.
       duration = const Duration(milliseconds: 260);
       curve = Curves.easeInCubic;
-      exitY = _offset == Offset.zero ? _size.height * 0.04 : _offset.dy * 1.3;
+      exitY = _offset.value == Offset.zero ? _size.height * 0.04 : _offset.value.dy * 1.3;
     }
 
     final completed = await _slideTo(Offset(exitX, exitY), duration: duration, curve: curve);
     // Interrupted (e.g. by an undo) — that path owns the card now.
     if (!mounted || !completed || !_flying) return;
 
-    setState(() {
-      _animating = false;
-      _dismissedId = asset.id;
-      _offset = Offset.zero;
-      _flying = false;
-    });
+    _animating = false;
+    _offset.value = Offset.zero;
+    _flying = false;
+    setState(() => _dismissedId = asset.id);
     widget.onSwiped(asset, decision);
   }
 
@@ -200,11 +203,9 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
     if (_size.isEmpty) return;
     _stop();
     final sign = from == Decision.keep ? 1.0 : -1.0;
-    setState(() {
-      _dismissedId = null;
-      _flying = false;
-      _offset = Offset(sign * _size.width * 1.2, _size.height * 0.04);
-    });
+    _flying = false;
+    _offset.value = Offset(sign * _size.width * 1.2, _size.height * 0.04);
+    setState(() => _dismissedId = null);
     _slideTo(Offset.zero, duration: const Duration(milliseconds: 360), curve: Curves.easeOutCubic);
   }
 
@@ -216,26 +217,21 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
       builder: (context, constraints) {
         _size = constraints.biggest;
         final visible = _visible;
-        final progress = SwipePhysics.progress(_offset.dx, _size.width);
 
         return Stack(
           clipBehavior: Clip.none,
           children: [
             // Back to front. Every card uses the same subtree shape, so a card's
             // loaded image survives being promoted to the top.
-            for (var i = visible.length - 1; i >= 0; i--) _buildCard(visible[i], i, progress),
+            for (var i = visible.length - 1; i >= 0; i--) _buildCard(visible[i], i),
           ],
         );
       },
     );
   }
 
-  Widget _buildCard(AssetEntity asset, int index, double progress) {
+  Widget _buildCard(AssetEntity asset, int index) {
     final isTop = index == 0;
-    final dx = isTop ? _offset.dx : 0.0;
-    // Cards behind slide up a step as the top card is dragged away. The
-    // hidden 4th card sits exactly behind the 3rd until it's revealed.
-    final depth = isTop ? 0.0 : (index - progress).clamp(0.0, 2.0);
     return Positioned.fill(
       key: ValueKey(asset.id),
       child: IgnorePointer(
@@ -246,18 +242,34 @@ class _CardStackState extends State<CardStack> with SingleTickerProviderStateMix
           onPanStart: isTop ? _onPanStart : null,
           onPanUpdate: isTop ? _onPanUpdate : null,
           onPanEnd: isTop ? _onPanEnd : null,
-          child: Transform.translate(
-            offset: isTop ? _offset : Offset(0, depth * 14),
-            child: Transform.rotate(
-              // Pivot below the card so it swings like it's held from underneath.
-              angle: SwipePhysics.rotation(dx, _size.width),
-              alignment: const Alignment(0, 1.4),
-              child: Transform.scale(
-                scale: 1 - depth * 0.05,
-                alignment: Alignment.bottomCenter,
-                child: SwipeCard(asset: asset, dragProgress: dx.sign * SwipePhysics.progress(dx, _size.width)),
-              ),
-            ),
+          child: ValueListenableBuilder<Offset>(
+            valueListenable: _offset,
+            // Built once and reused on every frame of the swipe.
+            child: SwipeCardFace(asset: asset),
+            builder: (context, offset, face) {
+              final progress = SwipePhysics.progress(offset.dx, _size.width);
+              if (!isTop) {
+                // Cards behind slide up a step as the top card is dragged away.
+                // The hidden 4th card sits exactly behind the 3rd until revealed.
+                final depth = (index - progress).clamp(0.0, 2.0);
+                return Transform.translate(
+                  offset: Offset(0, depth * 14),
+                  child: Transform.scale(scale: 1 - depth * 0.05, alignment: Alignment.bottomCenter, child: face),
+                );
+              }
+              return Transform.translate(
+                offset: offset,
+                child: Transform.rotate(
+                  // Pivot below the card so it swings like it's held from underneath.
+                  angle: SwipePhysics.rotation(offset.dx, _size.width),
+                  alignment: const Alignment(0, 1.4),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [face!, SwipeFeedback(progress: offset.dx.sign * progress)],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

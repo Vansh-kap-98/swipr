@@ -64,9 +64,17 @@ class TrashActions {
   Future<void> reconcile() async {
     final repo = _ref.read(photoRepositoryProvider);
     final dao = _ref.read(trashDaoProvider);
+    final pending = await dao.pendingItems();
+    if (pending.isEmpty) return;
+
+    // Each check is a round trip to the OS, so run them in batches instead of
+    // one after another — a 200-photo trash settles in a fraction of the time.
+    const batchSize = 16;
     final gone = <String>[];
-    for (final item in await dao.pendingItems()) {
-      if (!await repo.exists(item.assetId)) gone.add(item.assetId);
+    for (var start = 0; start < pending.length; start += batchSize) {
+      final batch = pending.skip(start).take(batchSize);
+      final results = await Future.wait(batch.map((item) async => (item.assetId, await repo.exists(item.assetId))));
+      gone.addAll(results.where((r) => !r.$2).map((r) => r.$1));
     }
     if (gone.isNotEmpty) await dao.markCommitted(gone);
   }

@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "apk": {
+    "enabled": true,
+    "url": "/downloads/swipr-1.0.0.apk",
+    "fileName": "swipr-1.0.0.apk",
+    "sizeMb": "16.3",
+    "sha256": "458cab32486c458b1b6248ae95e19b87a7ec15972a095164d3e36fab2df0d592"
+  },
+  "builtAt": "2026-09-18"
+}

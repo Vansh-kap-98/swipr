@@ -571,3 +571,49 @@ html:not(.reveal-ready) [data-reveal] { animation: reveal-failsafe 1ms 2.5s forw
   html:not(.nav-ready) .site-header__inner { height: auto; flex-wrap: wrap; padding-block: 12px; }
   html:not(.nav-ready) .site-nav { position: static; width: 100%; border: 0; }
 }
+
+/* ---- Phone-first refinements --------------------------------------------
+   Most visitors arrive on the phone they'd install the app on, so on small
+   screens the demo comes first, tap targets grow, and a sticky download
+   button follows the page. */
+
+.mobile-cta { display: none; }
+
+@media (max-width: 760px) {
+  /* Hero order: headline, the demo you can play with, then the pitch. */
+  .hero__grid { display: flex; flex-direction: column; gap: 24px; }
+  .hero__demo { order: -1; }
+  .hero__copy { display: contents; }
+  .hero .eyebrow { order: -2; }
+  .hero__title { order: -2; margin-bottom: 0; }
+  .hero__lead { order: 1; }
+  .hero__cta { order: 2; margin: 0; }
+  .trust-list { order: 3; }
+  .hero { padding-block: 24px 48px; }
+  .hero__title { font-size: clamp(2rem, 9vw, 2.75rem); }
+  .hero__cta .btn { width: 100%; }
+
+  /* Comfortable tap targets (44px+) for inline and footer links. */
+  .link-arrow, .site-footer ul a, .faq summary { min-height: 44px; display: flex; align-items: center; }
+  .trust-list { gap: 6px 16px; }
+
+  /* Tighter rhythm so the page isn't endless on a small screen. */
+  .section { padding-block: clamp(48px, 9vw, 72px); }
+  .steps, .feature-grid { gap: 12px; }
+  .step, .feature { padding: 20px; }
+
+  /* Sticky download button, sliding up from the bottom. */
+  .mobile-cta {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: block;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(10, 10, 10, 0.86);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border-top: 1px solid var(--border);
+    transform: translateY(110%);
+    transition: transform var(--medium) var(--ease);
+  }
+  .mobile-cta.is-shown { transform: none; }
+  .mobile-cta .btn { width: 100%; padding: 15px; font-size: 1.0625rem; }
+  /* Room so the sticky bar never covers the last line of the page. */
+  .site-footer__legal { padding-bottom: 96px; }
+}

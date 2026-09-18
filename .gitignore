@@ -60,5 +60,4 @@ web/next-env.d.ts
 web/public/downloads/
 web/public/favicon.ico
 web/public/site.webmanifest
-web/lib/build-info.json
 *.tsbuildinfo

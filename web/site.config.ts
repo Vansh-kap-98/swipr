@@ -21,11 +21,22 @@ export const site = {
     appStore: null as string | null,
     appStoreId: null as string | null,
   },
-  // Direct APK download. `source` is resolved by scripts/prepare.mjs, which
-  // copies the file into public/downloads and records its size and checksum.
+  // Direct APK download.
+  //
+  // `source` is the local file scripts/prepare.mjs measures (size + SHA-256).
+  //   app-release.apk                 universal, ~47 MB, installs on any phone
+  //   app-arm64-v8a-release.apk       ~16 MB, every phone sold since ~2016
+  //   (build both with: flutter build apk --split-per-abi --release)
+  //
+  // `externalUrl`: leave null to serve the file from this site. Set it to host
+  // the APK elsewhere — needed when the site is deployed from git (the APK is
+  // not committed) or when the host caps file size (Cloudflare Pages: 25 MB).
+  // A GitHub release asset works well:
+  //   https://github.com/<you>/<repo>/releases/download/v1.0.0/swipr-1.0.0.apk
   apk: {
     enabled: true,
-    source: '../build/app/outputs/flutter-apk/app-release.apk',
+    source: '../build/app/outputs/flutter-apk/app-arm64-v8a-release.apk',
+    externalUrl: null as string | null,
   },
 } as const;
 

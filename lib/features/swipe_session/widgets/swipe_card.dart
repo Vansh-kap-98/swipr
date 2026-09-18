@@ -1,89 +1,88 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../data/models.dart';
 import '../../../data/photo_repository.dart';
 import '../../../shared_widgets/photo_image.dart';
 
-/// One full-bleed photo card. [dragProgress] (-1…1, sign = direction) drives
-/// the live green/red feedback while dragging.
+const double kCardRadius = 22;
+
+/// The photo itself: image, caption, rounded clip and shadow.
 ///
-/// The photo, shadow and rounded clip sit in their own [RepaintBoundary], so
-/// while a card is dragged the GPU just moves a cached layer; only the thin
-/// feedback overlay is repainted each frame.
-class SwipeCard extends StatelessWidget {
-  const SwipeCard({super.key, required this.asset, this.dragProgress = 0});
+/// This never changes while a card is dragged, so [CardStack] passes it as the
+/// `child` of its animation builders. Flutter then reuses this whole subtree
+/// (including the decoded image) instead of rebuilding it every frame, and the
+/// [RepaintBoundary] lets the GPU move it as a cached layer.
+class SwipeCardFace extends StatelessWidget {
+  const SwipeCardFace({super.key, required this.asset});
 
   final AssetEntity asset;
-  final double dragProgress;
-
-  static const radius = 22.0;
 
   @override
   Widget build(BuildContext context) {
-    final strength = dragProgress.abs();
-    final decision = dragProgress > 0 ? Decision.keep : Decision.delete;
-    final color = decision == Decision.keep ? AppColors.keep : AppColors.delete;
+    return RepaintBoundary(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(kCardRadius),
+          boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 18, offset: Offset(0, 8))],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(kCardRadius),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              PhotoImage(asset: asset, size: PhotoImageSize.card),
+              Positioned(left: 0, right: 0, bottom: 0, child: _Caption(asset: asset)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        RepaintBoundary(child: _CardFace(asset: asset)),
-        if (strength > 0) ...[
-          IgnorePointer(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(radius),
-                color: color.withValues(alpha: 0.22 * strength),
-                border: Border.all(color: color.withValues(alpha: strength), width: 3),
-              ),
+/// The green/red feedback drawn over the top card while it's being dragged.
+/// [progress] is -1…1; the sign picks the side.
+class SwipeFeedback extends StatelessWidget {
+  const SwipeFeedback({super.key, required this.progress});
+
+  final double progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final strength = progress.abs();
+    if (strength == 0) return const SizedBox.shrink();
+
+    final keep = progress > 0;
+    final color = keep ? AppColors.keep : AppColors.delete;
+
+    return IgnorePointer(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(kCardRadius),
+              color: color.withValues(alpha: 0.22 * strength),
+              border: Border.all(color: color.withValues(alpha: strength), width: 3),
             ),
           ),
           Positioned(
             top: 36,
-            left: decision == Decision.keep ? 24 : null,
-            right: decision == Decision.delete ? 24 : null,
-            child: IgnorePointer(
-              // The stamp slides in from its own side as the drag builds up.
-              child: Transform.translate(
-                offset: Offset((decision == Decision.keep ? -1 : 1) * 40 * (1 - strength), 0),
-                child: Opacity(
-                  opacity: strength,
-                  child: Transform.rotate(
-                    angle: decision == Decision.keep ? -0.3 : 0.3,
-                    child: _Stamp(label: decision == Decision.keep ? 'KEEP' : 'DELETE', color: color),
-                  ),
+            left: keep ? 24 : null,
+            right: keep ? null : 24,
+            // The stamp slides in from its own side as the drag builds up.
+            child: Transform.translate(
+              offset: Offset((keep ? -1 : 1) * 40 * (1 - strength), 0),
+              child: Opacity(
+                opacity: strength,
+                child: Transform.rotate(
+                  angle: keep ? -0.3 : 0.3,
+                  child: _Stamp(label: keep ? 'KEEP' : 'DELETE', color: color),
                 ),
               ),
             ),
           ),
         ],
-      ],
-    );
-  }
-}
-
-class _CardFace extends StatelessWidget {
-  const _CardFace({required this.asset});
-
-  final AssetEntity asset;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(SwipeCard.radius),
-        boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 18, offset: Offset(0, 8))],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(SwipeCard.radius),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            PhotoImage(asset: asset, size: PhotoImageSize.card),
-            Positioned(left: 0, right: 0, bottom: 0, child: _Caption(asset: asset)),
-          ],
-        ),
       ),
     );
   }
@@ -99,10 +98,7 @@ class _Stamp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        border: Border.all(color: color, width: 4),
-        borderRadius: BorderRadius.circular(10),
-      ),
+      decoration: BoxDecoration(border: Border.all(color: color, width: 4), borderRadius: BorderRadius.circular(10)),
       child: Text(
         label,
         style: TextStyle(color: color, fontSize: 34, fontWeight: FontWeight.w900, letterSpacing: 2),

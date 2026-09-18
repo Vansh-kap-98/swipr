@@ -14,21 +14,32 @@ const config = readFileSync(join(root, 'site.config.ts'), 'utf8');
 const apkEnabled = /enabled:\s*true/.test(config);
 const apkSource = config.match(/source:\s*'([^']+)'/)?.[1];
 
+const externalUrl = config.match(/externalUrl:\s*'([^']+)'/)?.[1] ?? null;
+
 let apk = { enabled: false };
 if (apkEnabled && apkSource) {
   const from = resolve(root, apkSource);
   if (existsSync(from)) {
     const bytes = readFileSync(from);
     const fileName = `swipr-${version}.apk`;
-    mkdirSync(join(root, 'public/downloads'), { recursive: true });
-    copyFileSync(from, join(root, 'public/downloads', fileName));
+    // Hosting it elsewhere (a GitHub release, say)? Then don't copy it into the
+    // site — just link out, while still showing this file's size and checksum.
+    if (!externalUrl) {
+      mkdirSync(join(root, 'public/downloads'), { recursive: true });
+      copyFileSync(from, join(root, 'public/downloads', fileName));
+    }
     apk = {
       enabled: true,
-      url: `/downloads/${fileName}`,
+      url: externalUrl ?? `/downloads/${fileName}`,
       fileName,
       sizeMb: (bytes.length / 1024 / 1024).toFixed(1),
       sha256: createHash('sha256').update(bytes).digest('hex'),
     };
+  } else if (existsSync(join(root, 'lib/build-info.json'))) {
+    // No local APK (a deploy host building from git, for example): keep what the
+    // last local build recorded, so the download link and checksum still show.
+    apk = JSON.parse(readFileSync(join(root, 'lib/build-info.json'), 'utf8')).apk ?? { enabled: false };
+    console.warn(`! APK not found at ${from} — reusing the details from lib/build-info.json.`);
   } else {
     console.warn(`! APK not found at ${from} — the direct download will show as unavailable.`);
   }
