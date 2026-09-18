@@ -1,6 +1,6 @@
 # Swipr launch checklist
 
-Status on 2026-09-18: the app is code-complete for v1 (analyzer clean, 24 tests passing, release APK builds) but **has never run on a real phone**. The website is built and checked, but not deployed.
+Status on 2026-09-18: the app is code-complete for v1 (analyzer clean, 24 tests passing, release APK builds) but **has never run on a real phone**. Icons are done, the signing config is wired up, and the website is built and checked but not deployed.
 
 Items marked **blocker** must be done before anyone else installs the app.
 
@@ -26,7 +26,7 @@ Nothing below matters until the app has been used on real hardware.
 
 ## 2. App identity and assets — blocker
 
-- [ ] **Launcher icons are still Flutter's default** on both platforms. Design a real icon and generate all sizes (`flutter_launcher_icons` does both, including the Android adaptive icon)
+- [x] Launcher icons — done: Android (adaptive + monochrome) and iOS, generated from `assets/icon` via `tool/render_app_icon.mjs` + `dart run flutter_launcher_icons`
 - [ ] Decide the final app ID: currently `com.swipr.swipr` on both platforms. **It can never change after publishing**
 - [ ] Check the name "Swipr" isn't taken on either store and doesn't collide with an existing trademark
 - [ ] Confirm the display name shown under the icon ("Swipr") is what you want
@@ -34,9 +34,10 @@ Nothing below matters until the app has been used on real hardware.
 
 ## 3. Android release build — blocker
 
-- [ ] Create an upload keystore and `android/key.properties`, and switch `signingConfig` in `android/app/build.gradle.kts` off `debug` ([guide](https://docs.flutter.dev/deployment/android#signing-the-app))
+- [x] `android/app/build.gradle.kts` now reads `android/key.properties` and signs release builds with it (falling back to the debug key, with a warning, when the file is missing)
+- [ ] Add a `swipr` key to your existing keystore and write `android/key.properties` — see "Signing setup" at the bottom of this file
 - [ ] Back up the keystore and its passwords somewhere safe — losing it means you can never update the app
-- [ ] Add `key.properties` and `*.jks` to `.gitignore` (the project isn't a git repo yet — see section 9)
+- [x] `.gitignore` already covers `key.properties`, `*.jks` and `*.keystore`
 - [ ] Build an App Bundle for Play: `flutter build appbundle --release`
 - [ ] Build split APKs for the website: `flutter build apk --split-per-abi --release` (~20 MB each instead of 46.7 MB)
 - [ ] Install the signed build on a clean phone and check it opens, gets permission and deletes photos
@@ -97,7 +98,7 @@ Nothing below matters until the app has been used on real hardware.
 
 ## 9. Project housekeeping
 
-- [ ] The project isn't a git repository. Run `git init` and commit before publishing anything
+- [x] Git repository created
 - [ ] Decide public or private repository; if public, keep the keystore and `key.properties` out of it
 - [ ] Run `flutter analyze` and `flutter test` one more time before building the release
 - [ ] Tag the release and keep the exact APK/AAB you publish
@@ -107,3 +108,39 @@ Nothing below matters until the app has been used on real hardware.
 - [ ] Watch Play Console's pre-launch report and vitals (ANRs, crashes) — these arrive even with no in-app reporting
 - [ ] Read the first reviews for permission or deletion confusion
 - [ ] Keep `version:` in `pubspec.yaml` moving; Play rejects duplicate version codes
+
+
+---
+
+## Signing setup (Android)
+
+You already have a keystore from another app — reuse the file, but give Swipr its own key inside it.
+
+```bash
+"/c/Program Files/Android/Android Studio/jbr/bin/keytool.exe" -genkeypair -v -keystore "C:/path/to/your-existing.jks" -alias swipr -keyalg RSA -keysize 2048 -validity 10000
+```
+
+It asks for the keystore password you already use, then some name/organisation fields (anything sensible; they're only shown in the certificate), then a password for the new key.
+
+Then create `android/key.properties` — it's gitignored, so it never leaves your machine:
+
+```properties
+storeFile=C:/path/to/your-existing.jks
+storePassword=your-keystore-password
+keyAlias=swipr
+keyPassword=your-new-key-password
+```
+
+Use forward slashes in `storeFile`. Build and confirm it's really signed with that key:
+
+```bash
+flutter build appbundle --release
+```
+
+```bash
+"/c/Program Files/Android/Android Studio/jbr/bin/keytool.exe" -list -v -keystore "C:/path/to/your-existing.jks" -alias swipr
+```
+
+Compare the SHA-256 fingerprint with what Play Console shows after your first upload.
+
+**Back up the keystore file and both passwords** somewhere you won't lose them (password manager plus an offline copy). Enrol in Play App Signing when you create the Play listing: Google then holds the real signing key and yours is only the upload key, which can be reset if it's ever lost.

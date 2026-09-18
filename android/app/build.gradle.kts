@@ -1,8 +1,28 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Release signing. Create android/key.properties (never commit it) with:
+//   storeFile=C:/path/to/your.jks
+//   storePassword=...
+//   keyAlias=swipr
+//   keyPassword=...
+// Without that file, release builds fall back to the debug key so
+// `flutter run --release` still works — but such a build must never be shipped.
+val keystoreProperties = Properties().apply {
+    val file = rootProject.file("key.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+// Only sign with it once it's actually filled in and the keystore exists —
+// a half-filled file shouldn't break `flutter run --release`.
+val keystoreFile = keystoreProperties.getProperty("storeFile")?.takeIf { it.isNotBlank() }?.let { rootProject.file(it) }
+val hasReleaseKey = keystoreFile?.exists() == true &&
+    !keystoreProperties.getProperty("storePassword").isNullOrBlank() &&
+    !keystoreProperties.getProperty("keyAlias").isNullOrBlank()
 
 android {
     namespace = "com.swipr.swipr"
@@ -30,11 +50,23 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (hasReleaseKey) {
+            create("release") {
+                storeFile = keystoreFile
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName(if (hasReleaseKey) "release" else "debug")
+            if (!hasReleaseKey) {
+                logger.warn("WARNING: signing the release build with the DEBUG key — see android/key.properties in README/LAUNCH.md")
+            }
         }
     }
 }
