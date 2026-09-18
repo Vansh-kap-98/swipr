@@ -5,9 +5,9 @@ import { faqGroups } from '@/lib/faq';
 import { site } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'FAQ — Deleting Photos, Privacy & Permissions | Swipr',
+  title: 'FAQ: Deleting Photos & Videos, Privacy | Swipr',
   description:
-    "How Swipr's swipe-to-delete works, recovering photos, iCloud and Google Photos backups, the permissions it needs, and privacy.",
+    "How Swipr's swipe-to-delete works for photos and videos, getting something back, iCloud and Google Photos backups, permissions, and privacy.",
   alternates: { canonical: '/faq/' },
 };
 

@@ -9,7 +9,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: `${site.name} — ${site.tagline}`,
+  title: `${site.name}: ${site.tagline}`,
   description: site.description,
   applicationName: site.name,
   alternates: { canonical: '/' },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: site.name,
     locale: site.locale,
-    images: [{ url: '/img/og-image.png', width: 1200, height: 630, alt: 'Swipr — swipe right to keep, left to delete' }],
+    images: [{ url: '/img/og-image.png', width: 1200, height: 630, alt: 'Swipr: swipe right to keep, left to delete' }],
   },
   twitter: { card: 'summary_large_image', images: ['/img/og-image.png'] },
   icons: {

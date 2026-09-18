@@ -11,7 +11,7 @@ export function Footer() {
             <Logo />
             <span className="brand__name">Swipr</span>
           </Link>
-          <p>Swipe right to keep, left to delete. Free, no account, and your photos never leave your phone.</p>
+          <p>Swipe right to keep, left to delete. Free, no account, and nothing leaves your phone.</p>
         </div>
         <nav aria-label="Footer">
           <h2 className="site-footer__heading">App</h2>

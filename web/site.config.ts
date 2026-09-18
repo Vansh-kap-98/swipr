@@ -4,7 +4,7 @@ export const site = {
   url: 'https://swipr.app',
   tagline: 'Swipe to clean up your camera roll',
   description:
-    'Swipr turns deleting unwanted photos into a fast, Tinder-style swipe. Swipe right to keep, left to delete — free, no account, and your photos never leave your phone.',
+    'Your camera roll is full of stuff you would never miss. Swipr shows it to you one at a time so you can swipe it away. Free, no account, nothing leaves your phone.',
   contactEmail: 'hello@swipr.app',
   themeColor: '#0A0A0A',
   locale: 'en_US',

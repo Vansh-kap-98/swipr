@@ -5,7 +5,7 @@ import { site } from '@/lib/site';
 export const metadata: Metadata = {
   title: 'Privacy Policy | Swipr',
   description:
-    'Swipr collects no personal data, has no servers or accounts, and handles your photos only on your device. See exactly what it accesses and stores.',
+    'Swipr collects nothing. No servers, no account, and no analytics in the app. Here is exactly what it can see on your phone, and the little it keeps there.',
   alternates: { canonical: '/privacy/' },
 };
 
@@ -32,8 +32,8 @@ export default function PrivacyPage() {
         <article className="container narrow prose" data-reveal>
           <div className="callout">
             <p>
-              <strong>The short version:</strong> Swipr doesn&rsquo;t collect, send or sell any data. Your photos and
-              everything the app knows about them stay on your phone.
+              <strong>The short version:</strong> Swipr doesn&rsquo;t collect, send or sell any data. Your photos, videos
+              and everything the app knows about them stay on your phone.
             </p>
           </div>
 
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
           <p>With your permission, the app accesses your device&rsquo;s photo library in order to:</p>
           <ul>
             <li>show you your photos and videos, their albums, dates, sizes and lengths;</li>
-            <li>delete the photos you choose, after you confirm through your device&rsquo;s own system dialog.</li>
+            <li>delete the ones you choose, after you confirm through your device&rsquo;s own system dialog.</li>
           </ul>
           <p>
             You can grant full or limited access (selected photos only) and change it at any time in your device settings.
@@ -61,11 +61,11 @@ export default function PrivacyPage() {
           </p>
           <ul>
             <li>
-              the device&rsquo;s internal identifiers of photos you&rsquo;ve reviewed, and whether you kept or marked them
-              for deletion;
+              the device&rsquo;s internal identifiers of the items you&rsquo;ve reviewed, and whether you kept or marked
+              them for deletion;
             </li>
-            <li>your trash queue, including each photo&rsquo;s file size;</li>
-            <li>session history and statistics, such as photos reviewed, space freed and your streak;</li>
+            <li>your trash queue, including each item&rsquo;s file size;</li>
+            <li>session history and statistics, such as items reviewed, space freed and your streak;</li>
             <li>your settings.</li>
           </ul>
           <p>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
             receive or send that data anywhere else.
           </p>
           <p>
-            <strong>Deletions:</strong> when you delete photos, your device removes them from its photo library. If the
+            <strong>Deletions:</strong> when you delete something, your device removes it from its photo library. If the
             library syncs with a cloud service (for example iCloud Photos), that service applies the deletion under its own
             terms.
           </p>
@@ -95,7 +95,7 @@ export default function PrivacyPage() {
             This website sets no cookies, shows no advertising, and does not track you across other sites. It counts page
             views using our host&rsquo;s privacy-friendly analytics, which records the page visited, rough location
             (country) and device type. It does not store your IP address or build a profile of you, and the data is
-            aggregate — we can see that a page was visited, never who visited it.
+            aggregate: we can see that a page was visited, never who visited it.
           </p>
           <p>
             Like any web server, our hosting provider also keeps standard, short-lived request logs for security and

@@ -341,7 +341,7 @@ export function PhoneDemo() {
           </button>
         </div>
       </div>
-      <figcaption className="phone__hint">Try it — drag the photo</figcaption>
+      <figcaption className="phone__hint">Try it: drag the photo</figcaption>
     </figure>
   );
 }

@@ -11,12 +11,12 @@ export const faqGroups: FaqGroup[] = [
     items: [
       {
         q: 'What is Swipr?',
-        a: 'Swipr is a photo cleaner for Android and iPhone. It shows your photos one at a time — swipe right to keep a photo, left to delete it — so you can clear out a cluttered gallery quickly.',
+        a: 'Swipr is a photo and video cleaner for Android and iPhone. It shows your gallery one item at a time. Swipe right to keep, left to delete, and the clutter clears out fast.',
       },
-      { q: 'Is Swipr free?', a: 'Yes. There are no ads, subscriptions or in-app purchases.' },
+      { q: 'Is Swipr free?', a: 'Yes, properly free. No ads, no subscription, nothing to buy inside it.' },
       {
         q: 'Do I need to create an account?',
-        a: 'No. There&rsquo;s no sign-up or login. Open the app, allow photo access and start swiping.',
+        a: 'No. There is nothing to sign up for. Open it, allow access to your photos, and start swiping.',
       },
       {
         q: 'Which phones does Swipr work on?',
@@ -33,28 +33,28 @@ export const faqGroups: FaqGroup[] = [
     id: 'faq-deleting',
     items: [
       {
-        q: 'Does swiping left delete the photo immediately?',
-        a: 'No. Swiping left adds the photo to Swipr&rsquo;s trash. Nothing is removed from your phone until you open the trash, tap Empty Trash and confirm.',
+        q: 'Does swiping left delete it immediately?',
+        a: 'No. Swiping left adds it to Swipr&rsquo;s trash. Nothing is removed from your phone until you open the trash, tap Empty Trash and confirm.',
       },
       {
-        q: 'Can I get a photo back after swiping left?',
-        a: 'Yes. Tap Undo to bring back recent swipes, or open the trash and tap any photo to restore it. After you empty the trash, deleted photos follow your phone&rsquo;s normal rules — for example, they may appear in the Photos app&rsquo;s &ldquo;Recently Deleted&rdquo; album for a while.',
+        q: 'Can I get something back after swiping left?',
+        a: 'Yes. Tap Undo to bring back recent swipes, or open the trash and tap any photo to restore it. After you empty the trash, deleted photos follow your phone&rsquo;s normal rules. In the Photos app, for example, they may sit in &ldquo;Recently Deleted&rdquo; for a while.',
       },
       {
         q: 'Why does my phone ask me to confirm the deletion?',
-        a: 'Android and iOS don&rsquo;t let any app delete your photos silently — your phone always shows its own confirmation. Swipr groups everything in the trash into one request, so you confirm once instead of once per photo. (Android 10 is an exception and may ask for each photo.)',
+        a: 'Android and iOS don&rsquo;t let any app delete your photos silently. Your phone always shows its own confirmation. Swipr groups everything in the trash into one request, so you confirm once instead of once per photo. (Android 10 is an exception and may ask for each photo.)',
       },
       {
         q: 'What happens if I cancel the confirmation?',
-        a: 'Nothing is deleted and your trash stays exactly as it was, so you can try again later.',
+        a: 'Nothing is deleted. Your trash is exactly as you left it, so you can change your mind and try again later.',
       },
       {
-        q: 'Will deleting in Swipr remove photos from iCloud or Google Photos?',
-        a: 'Swipr deletes photos through your phone&rsquo;s own photo library, exactly like deleting them in your gallery app. If your library syncs with iCloud Photos, the deletion syncs too. Google Photos backups have their own settings, so check them if you want to keep a backup copy.',
+        q: 'Will deleting in Swipr remove things from iCloud or Google Photos?',
+        a: 'Swipr deletes photos and videos through your phone&rsquo;s own library, exactly like deleting them in your gallery app. If your library syncs with iCloud Photos, the deletion syncs too. Google Photos backups have their own settings, so check them if you want to keep a backup copy.',
       },
       {
-        q: 'Will I see the same photos again next time?',
-        a: 'No. Swipr remembers which photos you&rsquo;ve reviewed and skips them. You can reset this in Settings if you want to go through everything again.',
+        q: 'Will I see the same things again next time?',
+        a: 'No. Swipr remembers what you&rsquo;ve reviewed and skips it. You can reset this in Settings if you want to go through everything again.',
       },
     ],
   },
@@ -76,7 +76,7 @@ export const faqGroups: FaqGroup[] = [
       },
       {
         q: 'Does Swipr collect any data?',
-        a: 'No. There are no analytics, ads or crash reporters. Swipr stores its own records — which photos you reviewed, your trash and your stats — only on your phone. See the <a href="/privacy/">privacy policy</a>.',
+        a: 'No. There are no analytics, ads or crash reporters. Swipr stores its own records (what you reviewed, your trash and your stats) only on your phone. See the <a href="/privacy/">privacy policy</a>.',
       },
     ],
   },
@@ -86,7 +86,7 @@ export const faqGroups: FaqGroup[] = [
     items: [
       {
         q: 'Is the Android APK safe to install?',
-        a: 'Download it only from this website. The download page shows the file&rsquo;s SHA-256 checksum so you can check it matches. Android may warn you about installing apps from outside Google Play — that&rsquo;s normal for any direct download.',
+        a: 'Download it only from this website. The download page shows the file&rsquo;s SHA-256 checksum so you can check it matches. Android may warn you about installing apps from outside Google Play. That&rsquo;s normal for any direct download.',
       },
       {
         q: 'Why can&rsquo;t I download Swipr directly on iPhone?',
@@ -100,11 +100,11 @@ export const faqGroups: FaqGroup[] = [
 export const homeFaq: FaqItem[] = [
   { q: 'Is Swipr free?', a: 'Yes. Swipr is free, with no ads, subscriptions or in-app purchases.' },
   {
-    q: 'Does swiping left delete the photo right away?',
-    a: 'No. It goes into Swipr&rsquo;s trash first. You can restore anything from there, and photos are only deleted when you empty the trash and confirm on your phone.',
+    q: 'Does swiping left delete it right away?',
+    a: 'No. It goes into Swipr&rsquo;s trash first. You can restore anything from there, and nothing is deleted until you empty the trash and confirm on your phone.',
   },
   {
     q: 'Are my photos uploaded anywhere?',
-    a: 'Never. Swipr works entirely on your device and has no servers to upload to.',
+    a: 'Never. Your photos and videos stay on your device, and Swipr has no servers to upload them to.',
   },
 ];

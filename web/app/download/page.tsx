@@ -5,25 +5,25 @@ import { Platforms } from '@/components/Platforms';
 import { appVersion } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'Download Swipr for Android & iPhone — Free Photo Cleaner App',
+  title: 'Download Swipr: Free Photo & Video Cleaner for Android',
   description:
-    'Download Swipr, the free swipe-to-delete photo cleaner. Get the Android APK with a SHA-256 checksum, check requirements, and see exactly which permissions the app uses.',
+    'Get the free Android APK, with its checksum so you can verify it, the phone versions it runs on, and a plain list of every permission Swipr asks for and why.',
   alternates: { canonical: '/download/' },
 };
 
 const permissions = [
-  { permission: 'Photos (read)', when: 'Android 13+', why: 'To show your photos one at a time.' },
+  { permission: 'Photos (read)', when: 'Android 13+', why: 'To show your photos in the swipe stack.' },
   { permission: 'Videos (read)', when: 'Android 13+', why: 'To show videos in the same stack as your photos.' },
   {
     permission: 'Selected photos only',
     when: 'Android 14+',
     why: 'Lets you share just some items instead of your whole library.',
   },
-  { permission: 'Storage (read)', when: 'Android 8–12', why: "Older Android versions' equivalent of photo access." },
+  { permission: 'Storage (read)', when: 'Android 8–12', why: "Older Android versions' equivalent of photo and video access." },
   {
     permission: 'Storage (write)',
     when: 'Android 8–9 only',
-    why: "Required by those versions to delete photos you've confirmed.",
+    why: "Required by those versions to delete the items you've confirmed.",
   },
   {
     permission: 'Photo library (read & write)',
@@ -34,8 +34,8 @@ const permissions = [
 
 const whatsNew = [
   'Videos are included now: they appear in the stack with their length, and play when you tap',
-  'The resume card can be swiped — right to carry on, left to dismiss it',
-  'Smoother swiping: photos are decoded before a card reaches the top',
+  'The resume card can be swiped: right to carry on, left to dismiss it',
+  'Smoother swiping: the next cards are loaded before you get to them',
 ];
 
 const alreadyIn = [
@@ -61,7 +61,7 @@ export default function DownloadPage() {
             Download Swipr
           </h1>
           <p className="section__lead" data-reveal>
-            Free on Android and iPhone. No account, and nothing to set up — open it, pick an album, start swiping.
+            Free, on Android and iPhone. Nothing to set up: open it, allow access to your photos, start swiping.
           </p>
           <div data-reveal>
             <DownloadButtons />
@@ -84,7 +84,7 @@ export default function DownloadPage() {
             Permissions, explained
           </h2>
           <p className="section__lead" data-reveal>
-            Swipr asks for access to your photos and videos, nothing more. Here&rsquo;s exactly what it requests and why.
+            Swipr asks for your photos and videos. That is the lot. Here is each request and what it is for.
           </p>
           <div className="table-wrap" data-reveal>
             <table className="perm-table">

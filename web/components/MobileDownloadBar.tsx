@@ -38,7 +38,7 @@ export function MobileDownloadBar() {
     ? `Download APK · ${directApk.sizeMb} MB`
     : platform === 'ios'
       ? 'Get Swipr for iPhone'
-      : 'Download Swipr — free';
+      : 'Download Swipr, free';
 
   return (
     <div className={`mobile-cta${shown ? ' is-shown' : ''}`} aria-hidden={!shown}>
