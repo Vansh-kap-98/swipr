@@ -35,6 +35,20 @@ if (apkEnabled && apkSource) {
       sizeMb: (bytes.length / 1024 / 1024).toFixed(1),
       sha256: createHash('sha256').update(bytes).digest('hex'),
     };
+  } else if (existsSync(join(root, 'public/downloads', `swipr-${version}.apk`))) {
+    // No local Flutter build output — this is a deploy host (Vercel, Netlify…)
+    // building from the repo. The APK committed under public/downloads is the
+    // file that will be served, so measure that one.
+    const fileName = `swipr-${version}.apk`;
+    const bytes = readFileSync(join(root, 'public/downloads', fileName));
+    apk = {
+      enabled: true,
+      url: externalUrl ?? `/downloads/${fileName}`,
+      fileName,
+      sizeMb: (bytes.length / 1024 / 1024).toFixed(1),
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+    };
+    console.warn(`  (using the committed public/downloads/${fileName})`);
   } else if (externalUrl && existsSync(join(root, 'lib/build-info.json'))) {
     // No local APK, but the file is hosted elsewhere: reuse the size and
     // checksum recorded by the last local build. Only safe when the link
