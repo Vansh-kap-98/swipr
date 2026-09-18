@@ -107,7 +107,7 @@ class _SwipeSessionScreenState extends ConsumerState<SwipeSessionScreen> {
       (_, SwipeSessionState(error: final Object e)) => EmptyState(
         key: const ValueKey('error'),
         emoji: '⚠️',
-        title: 'Couldn\'t load these photos',
+        title: 'Couldn\'t load this album',
         message: '$e',
         action: FilledButton(
           onPressed: () => _controller.start(widget.scope, resumeSessionId: widget.resumeSessionId),
@@ -311,9 +311,9 @@ class _FinishedView extends ConsumerWidget {
     final nothingHere = state.total == 0;
     return EmptyState(
       emoji: nothingHere ? '📭' : '🎉',
-      title: nothingHere ? 'No photos here' : 'No more photos in ${state.scope!.label}',
+      title: nothingHere ? 'Nothing here' : 'All done with ${state.scope!.label}',
       message: nothingHere
-          ? 'This album is empty, or Swipr can\'t see its photos.'
+          ? 'This album is empty, or Swipr can\'t see what\'s in it.'
           : state.kept + state.deleted == 0
           ? 'You\'ve already reviewed everything here.'
           : 'Session complete.',
@@ -389,12 +389,12 @@ class _DeleteNowSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Delete ${plural(pending.count, 'photo')} now?',
+              'Delete ${plural(pending.count, 'item')} now?',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
             Text(
-              'You have ${plural(pending.count, 'photo')} marked for deletion (${formatBytes(pending.bytes)}). '
+              'You have ${plural(pending.count, 'item')} marked for deletion (${formatBytes(pending.bytes)}). '
               'Your phone will ask you to confirm.',
               style: const TextStyle(color: AppColors.muted),
             ),

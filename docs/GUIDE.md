@@ -266,11 +266,11 @@ Future<AssetEntity?> assetById(String id) async {
 
 ### Permissions
 
-Android and iOS both gate photo access, and Android changed the rules three times in recent versions. The app asks for images only:
+Android and iOS both gate photo access, and Android changed the rules three times in recent versions. The app asks for photos and videos:
 
 ```dart
 static const _permissionOption = PermissionRequestOption(
-  androidPermission: AndroidPermission(type: RequestType.image, mediaLocation: false),
+  androidPermission: AndroidPermission(type: RequestType.common, mediaLocation: false),
 );
 ```
 
@@ -278,7 +278,7 @@ which produces:
 
 | Android version | What the user is asked |
 |---|---|
-| 13+ | Photos only (`READ_MEDIA_IMAGES`) |
+| 13+ | Photos and videos (`READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`) |
 | 14+ | Also offers "Select photos" — partial access |
 | 8–12 | Storage read |
 | 8–9 | Storage write as well, because those versions need it to delete |

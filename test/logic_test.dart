@@ -59,6 +59,14 @@ void main() {
     });
   });
 
+  test('formatDuration reads like a video length', () {
+    expect(formatDuration(const Duration(seconds: 7)), '0:07');
+    expect(formatDuration(const Duration(seconds: 42)), '0:42');
+    expect(formatDuration(const Duration(minutes: 3, seconds: 5)), '3:05');
+    expect(formatDuration(const Duration(hours: 1, minutes: 2, seconds: 11)), '1:02:11');
+    expect(formatDuration(Duration.zero), '0:00');
+  });
+
   test('formatBytes', () {
     expect(formatBytes(512), '512 B');
     expect(formatBytes(2048), '2 KB');

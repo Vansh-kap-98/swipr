@@ -48,8 +48,8 @@ export default function FeaturesPage() {
             <div className="feature-row__copy">
               <h2>Swipe to decide</h2>
               <p>
-                Photos appear full screen, one at a time, with the next ones stacked behind. Drag right to keep or left to
-                delete — the card tilts as you move and turns green or red before you let go. A short drag springs back, so
+                Photos and videos appear full screen, one at a time, with the next ones stacked behind. Drag right to keep
+                or left to delete — the card tilts as you move and turns green or red before you let go. A short drag springs back, so
                 you never decide by accident.
               </p>
               <p>Prefer tapping? The ✕ and ✓ buttons do exactly the same thing.</p>
@@ -133,6 +133,7 @@ export default function FeaturesPage() {
                 Blur and missed focus are easy to miss on a small preview. Tap any photo to open it at full resolution,
                 pinch to zoom, and drag down to go back.
               </p>
+              <p>Videos play right there too, so you can check one before deciding — they&rsquo;re often the biggest files on your phone.</p>
             </div>
           </article>
 
@@ -197,7 +198,6 @@ export default function FeaturesPage() {
           </p>
           <ul className="check-list check-list--muted" data-reveal>
             <li>Finding duplicate and near-identical photos automatically</li>
-            <li>Videos</li>
             <li>Checking a photo is backed up before you delete it</li>
             <li>Syncing your progress between devices</li>
           </ul>

@@ -30,7 +30,7 @@ class TrashScreen extends ConsumerWidget {
         key: ValueKey('empty'),
         emoji: '✨',
         title: 'Nothing marked for deletion',
-        message: 'Photos you swipe left on wait here until you empty the trash.',
+        message: 'Anything you swipe left on waits here until you empty the trash.',
       ),
       AsyncValue(:final List<TrashItem> value) => _TrashGrid(key: const ValueKey('grid'), items: value),
       _ => const SlideLoader(key: ValueKey('loading')),
@@ -89,7 +89,7 @@ class TrashScreen extends ConsumerWidget {
   Future<void> _restoreAll(BuildContext context, WidgetRef ref, List<TrashItem> items) async {
     final ids = [for (final i in items) i.assetId];
     await ref.read(trashActionsProvider).restore(ids);
-    if (context.mounted) showSlideToast(context, 'Restored ${plural(ids.length, 'photo')}');
+    if (context.mounted) showSlideToast(context, 'Restored ${plural(ids.length, 'item')}');
   }
 }
 
@@ -104,7 +104,7 @@ Future<void> commitTrash(BuildContext context, WidgetRef ref) async {
     case CommitDone(:final freed, :final remaining):
       await showFreedCelebration(context, freed);
       if (remaining > 0 && context.mounted) {
-        showSlideToast(context, '${plural(remaining, 'photo')} couldn\'t be deleted and are still in the trash.');
+        showSlideToast(context, '${plural(remaining, 'item')} couldn\'t be deleted and are still in the trash.');
       }
   }
 }
@@ -122,7 +122,7 @@ class _TrashGrid extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(16, 4, 16, 12),
           sliver: SliverToBoxAdapter(
             child: Text(
-              'Tap a photo to restore it. Nothing is deleted until you empty the trash.',
+              'Tap to restore. Nothing is deleted until you empty the trash.',
               style: TextStyle(color: AppColors.muted),
             ),
           ),
@@ -169,7 +169,7 @@ class _TrashTileState extends ConsumerState<_TrashTile> {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Restore photo',
+      label: 'Restore',
       child: PressSlide(
         onTap: _restore,
         child: AnimatedSlide(

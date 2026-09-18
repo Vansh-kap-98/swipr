@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import type { Metadata, Viewport } from 'next';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
@@ -52,6 +53,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="main">{children}</main>
         <Footer />
         <MobileDownloadBar />
+        {/* Cookieless page counts. No personal data, no cross-site tracking;
+            the footer and privacy policy say so plainly. */}
+        <Analytics />
       </body>
     </html>
   );

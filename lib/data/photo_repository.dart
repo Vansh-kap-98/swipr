@@ -5,13 +5,17 @@ import 'package:photo_manager/photo_manager.dart';
 
 import 'models.dart';
 
-export 'package:photo_manager/photo_manager.dart' show AssetEntity, PermissionState, PermissionStateExt;
+export 'package:photo_manager/photo_manager.dart' show AssetEntity, AssetType, PermissionState, PermissionStateExt;
 
 /// The only place in the app that talks to `photo_manager`. Screens and
 /// providers go through this so an upgrade or package swap touches one file.
 class PhotoRepository {
+  /// Photos and videos. `common` is both; it drives which permissions are
+  /// requested as well as what the queries return.
+  static const _mediaTypes = RequestType.common;
+
   static const _permissionOption = PermissionRequestOption(
-    androidPermission: AndroidPermission(type: RequestType.image, mediaLocation: false),
+    androidPermission: AndroidPermission(type: RequestType.common, mediaLocation: false),
   );
 
   static FilterOptionGroup _filter({DateTimeCond? createdBetween}) => FilterOptionGroup(
@@ -27,13 +31,13 @@ class PhotoRepository {
 
   Future<void> openAppSettings() => PhotoManager.openSetting();
 
-  /// iOS 14+ / Android 14+: lets a limited-access user pick more photos.
-  Future<void> selectMorePhotos() => PhotoManager.presentLimited(type: RequestType.image);
+  /// iOS 14+ / Android 14+: lets a limited-access user pick more media.
+  Future<void> selectMorePhotos() => PhotoManager.presentLimited(type: RequestType.common);
 
   // ---- Browsing -----------------------------------------------------------
 
   Future<List<AlbumInfo>> albums() async {
-    final paths = await PhotoManager.getAssetPathList(type: RequestType.image, filterOption: _filter());
+    final paths = await PhotoManager.getAssetPathList(type: _mediaTypes, filterOption: _filter());
     final albums = <AlbumInfo>[];
     for (final path in paths) {
       final count = await path.assetCountAsync;
@@ -82,7 +86,7 @@ class PhotoRepository {
         final all = await _allPath();
         return all == null ? const [] : _loadAll(all);
       case ScopeKind.album:
-        final paths = await PhotoManager.getAssetPathList(type: RequestType.image, filterOption: _filter());
+        final paths = await PhotoManager.getAssetPathList(type: _mediaTypes, filterOption: _filter());
         final path = paths.where((p) => p.id == scope.albumId).firstOrNull;
         return path == null ? const [] : _loadAll(path);
       case ScopeKind.month:
@@ -99,7 +103,7 @@ class PhotoRepository {
 
   Future<AssetPathEntity?> _allPath({FilterOptionGroup? filter}) async {
     final paths = await PhotoManager.getAssetPathList(
-      type: RequestType.image,
+      type: _mediaTypes,
       onlyAll: true,
       filterOption: filter ?? _filter(),
     );

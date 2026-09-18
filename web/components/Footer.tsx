@@ -43,7 +43,7 @@ export function Footer() {
         <p>
           © {new Date().getFullYear()} Swipr · Version {appVersion}
         </p>
-        <p>This website uses no cookies, analytics or trackers.</p>
+        <p>No cookies and no ads. Anonymous page counts only.</p>
       </div>
     </footer>
   );

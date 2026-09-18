@@ -13,3 +13,12 @@ String formatBytes(int bytes) {
 
 String plural(int count, String singular, [String? pluralForm]) =>
     '$count ${count == 1 ? singular : (pluralForm ?? '${singular}s')}';
+
+/// "0:42", "3:05" or "1:02:11" — the way phones label video length.
+String formatDuration(Duration d) {
+  final hours = d.inHours;
+  final minutes = d.inMinutes.remainder(60);
+  final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+  if (hours > 0) return '$hours:${minutes.toString().padLeft(2, '0')}:$seconds';
+  return '$minutes:$seconds';
+}

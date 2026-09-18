@@ -94,7 +94,7 @@ Nothing below matters until the app has been used on real hardware.
 - [ ] **iCloud downloads on iPhone:** the photo package always allows iOS to fetch full-quality copies from the user's iCloud. It's the OS talking to the user's own account, but the privacy page should keep saying so
 - [ ] **English only** — no translations in v1
 - [ ] **Support channel:** who answers the contact email
-- [ ] Decide what version 1.1 is (duplicate detection, videos, backup checks) so reviews have an answer
+- [ ] Decide what version 1.1 is (duplicate detection, backup checks) so reviews have an answer
 
 ## 9. Project housekeeping
 

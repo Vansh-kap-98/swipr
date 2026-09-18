@@ -23,7 +23,7 @@ flutter analyze
 ### How it's built
 
 - **State:** Riverpod 3, no code generation.
-- **Photos:** `photo_manager`. Everything goes through [lib/data/photo_repository.dart](lib/data/photo_repository.dart), so upgrading or replacing that package touches one file.
+- **Photos and videos:** `photo_manager` (videos play in the zoom view via `video_player`). Everything goes through [lib/data/photo_repository.dart](lib/data/photo_repository.dart), so upgrading or replacing that package touches one file.
 - **Storage:** SQLite (`sqflite`), on-device only. Tables: `swipe_decisions`, `trash_queue`, `sessions`, `app_settings`. `AppDatabase.watch` re-runs a query whenever its tables change, so screens update themselves.
 - **Deleting photos:** swiping left only queues the photo in the app's trash. **Empty Trash** sends one `deleteWithIds` request, so you get a single system prompt on iOS and Android 11+ (Android 10 still asks per photo). Afterwards the app verifies each photo is really gone, which makes deleting safe to retry or interrupt; leftovers are reconciled at the next launch.
 - **Swiping:** a custom `CardStack`, no extra package. The rules for when a swipe counts live in `SwipePhysics` and are tested. The ✕/✓ buttons run the same animation and code path as a gesture.
@@ -52,4 +52,4 @@ node tool/render_app_icon.mjs   # redraws the 1024px sources (needs Chrome)
 dart run flutter_launcher_icons  # writes every Android and iOS size
 ```
 
-Not in v1: duplicate detection, cloud backup checks, videos, sharing, and syncing between devices.
+Handles photos and videos. Not in v1: duplicate detection, cloud backup checks, sharing, and syncing between devices.

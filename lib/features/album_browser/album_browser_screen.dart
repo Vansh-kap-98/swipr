@@ -164,7 +164,7 @@ class _LimitedAccessBanner extends StatelessWidget {
         children: [
           const Icon(Icons.lock_outline_rounded, size: 18, color: AppColors.muted),
           const SizedBox(width: 10),
-          const Expanded(child: Text('Swipr can only see photos you selected.', style: TextStyle(fontSize: 13))),
+          const Expanded(child: Text('Swipr can only see the media you selected.', style: TextStyle(fontSize: 13))),
           TextButton(onPressed: onSelectMore, child: const Text('Select more')),
         ],
       ),
@@ -172,6 +172,8 @@ class _LimitedAccessBanner extends StatelessWidget {
   }
 }
 
+/// The unfinished session banner. Swipe it right (or tap) to pick up where you
+/// left off, left to dismiss it — the same language as the cards themselves.
 class _ContinueCard extends ConsumerWidget {
   const _ContinueCard({required this.onResume});
 
@@ -190,42 +192,108 @@ class _ContinueCard extends ConsumerWidget {
           : Padding(
               key: ValueKey('continue-${session.id}'),
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-              child: PressSlide(
-                onTap: () => onResume(session),
-                nudge: const Offset(0.02, 0),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    gradient: const LinearGradient(colors: [AppColors.accent, AppColors.accentDeep]),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.play_arrow_rounded, size: 32, color: Colors.black),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Continue swiping · ${session.scope!.label}',
-                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${session.keptCount} kept · ${session.deletedCount} marked for deletion',
-                              style: const TextStyle(color: Color(0xCC000000), fontSize: 13),
-                            ),
-                          ],
-                        ),
+              child: Dismissible(
+                key: ValueKey('dismiss-${session.id}'),
+                background: const _ContinueAction(
+                  alignment: Alignment.centerLeft,
+                  icon: Icons.play_arrow_rounded,
+                  label: 'Continue',
+                  color: AppColors.keep,
+                ),
+                secondaryBackground: const _ContinueAction(
+                  alignment: Alignment.centerRight,
+                  icon: Icons.close_rounded,
+                  label: 'Dismiss',
+                  color: AppColors.delete,
+                ),
+                confirmDismiss: (direction) async {
+                  if (direction == DismissDirection.startToEnd) {
+                    // Swipe right: resume. The card stays — the session is
+                    // still unfinished until it's swiped through.
+                    onResume(session);
+                    return false;
+                  }
+                  // Swipe left: close the session so it stops being offered.
+                  await ref.read(sessionsDaoProvider).end(session.id);
+                  return true;
+                },
+                child: Semantics(
+                  button: true,
+                  label: 'Continue swiping ${session.scope!.label}',
+                  child: PressSlide(
+                    onTap: () => onResume(session),
+                    nudge: const Offset(0.02, 0),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: const LinearGradient(colors: [AppColors.accent, AppColors.accentDeep]),
                       ),
-                      const Icon(Icons.chevron_right_rounded, color: Colors.black),
-                    ],
+                      child: Row(
+                        children: [
+                          const Icon(Icons.play_arrow_rounded, size: 32, color: Colors.black),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Continue swiping · ${session.scope!.label}',
+                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${session.keptCount} kept · ${session.deletedCount} marked · swipe to dismiss',
+                                  style: const TextStyle(color: Color(0xCC000000), fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.chevron_right_rounded, color: Colors.black),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
+    );
+  }
+}
+
+/// What shows behind the continue card as it's dragged aside.
+class _ContinueAction extends StatelessWidget {
+  const _ContinueAction({
+    required this.alignment,
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final Alignment alignment;
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 22),
+      alignment: alignment,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: color.withValues(alpha: 0.18),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(width: 8),
+          Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w700)),
+        ],
+      ),
     );
   }
 }
@@ -244,8 +312,8 @@ class _AlbumsTab extends ConsumerWidget {
         AsyncValue(:final List<AlbumInfo> value) when value.isEmpty => const EmptyState(
           key: ValueKey('empty'),
           emoji: '🖼️',
-          title: 'No photos found',
-          message: 'Take some pictures and come back!',
+          title: 'Nothing to clean up',
+          message: 'Take some photos or videos and come back!',
         ),
         AsyncValue(:final List<AlbumInfo> value) => _ScopeGrid(
           key: const ValueKey('grid'),
@@ -286,7 +354,7 @@ class _MonthsTab extends ConsumerWidget {
         AsyncValue(:final List<MonthBucket> value) when value.isEmpty => const EmptyState(
           key: ValueKey('empty'),
           emoji: '📅',
-          title: 'No photos found',
+          title: 'Nothing to clean up',
         ),
         AsyncValue(:final List<MonthBucket> value) => _ScopeGrid(
           key: const ValueKey('grid'),

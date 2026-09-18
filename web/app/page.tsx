@@ -19,7 +19,7 @@ const features = [
   {
     icon: 'swipe',
     title: 'Swipe to decide',
-    body: 'One photo at a time, full screen. The card follows your finger, so a decision is a flick.',
+    body: 'One photo or video at a time, full screen. The card follows your finger, so a decision is a flick.',
   },
   {
     icon: 'trash',
@@ -39,7 +39,7 @@ const features = [
   {
     icon: 'zoom',
     title: 'Zoom before you choose',
-    body: "Tap a photo to see it at full resolution and spot blur you'd miss on a small preview.",
+    body: 'Tap to see a photo at full resolution, or play a video, before you decide.',
   },
   {
     icon: 'stats',

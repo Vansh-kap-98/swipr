@@ -17,7 +17,7 @@ class TrashPill extends ConsumerWidget {
     final summary = ref.watch(trashSummaryProvider).value;
     final count = summary?.count ?? 0;
     final active = count > 0;
-    final label = active ? '🗑 ${plural(count, 'photo')} · ${formatBytes(summary!.bytes)}' : '🗑 0';
+    final label = active ? '🗑 ${plural(count, 'item')} · ${formatBytes(summary!.bytes)}' : '🗑 0';
 
     return Semantics(
       button: true,

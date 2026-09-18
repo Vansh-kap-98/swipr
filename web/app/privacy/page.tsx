@@ -47,7 +47,7 @@ export default function PrivacyPage() {
           <h2>What the app accesses</h2>
           <p>With your permission, the app accesses your device&rsquo;s photo library in order to:</p>
           <ul>
-            <li>show you your photos, albums and their dates, sizes and dimensions;</li>
+            <li>show you your photos and videos, their albums, dates, sizes and lengths;</li>
             <li>delete the photos you choose, after you confirm through your device&rsquo;s own system dialog.</li>
           </ul>
           <p>
@@ -69,7 +69,7 @@ export default function PrivacyPage() {
             <li>your settings.</li>
           </ul>
           <p>
-            It never stores copies of your photos. This database is excluded from cloud and device backups, and it&rsquo;s
+            It never stores copies of your photos or videos. This database is excluded from cloud and device backups, and it&rsquo;s
             removed when you uninstall the app.
           </p>
 
@@ -92,9 +92,14 @@ export default function PrivacyPage() {
 
           <h2>This website</h2>
           <p>
-            This website uses no cookies, analytics, trackers or third-party resources. Like any web server, our hosting
-            provider may keep standard, short-lived server logs (such as IP address and requested page) for security and
-            operations.
+            This website sets no cookies, shows no advertising, and does not track you across other sites. It counts page
+            views using our host&rsquo;s privacy-friendly analytics, which records the page visited, rough location
+            (country) and device type. It does not store your IP address or build a profile of you, and the data is
+            aggregate — we can see that a page was visited, never who visited it.
+          </p>
+          <p>
+            Like any web server, our hosting provider also keeps standard, short-lived request logs for security and
+            operations. The app itself contains no analytics of any kind.
           </p>
 
           <h2>Children</h2>

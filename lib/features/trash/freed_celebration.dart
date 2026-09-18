@@ -67,7 +67,7 @@ class _Celebration extends StatelessWidget {
               SlideIn(
                 delay: const Duration(milliseconds: 400),
                 child: Text(
-                  'across ${plural(freed.count, 'photo')}',
+                  'across ${plural(freed.count, 'item')}',
                   style: text.titleMedium?.copyWith(color: AppColors.muted),
                 ),
               ),

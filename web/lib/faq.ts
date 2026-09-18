@@ -24,7 +24,7 @@ export const faqGroups: FaqGroup[] = [
       },
       {
         q: 'Does Swipr work with videos?',
-        a: 'Not yet. Version 1 handles photos only; video support is planned for a later version.',
+        a: 'Yes. Videos appear in the stack alongside your photos, with their length on the thumbnail. Tap one to play it before you decide, and clearing out a few long videos frees a lot of space.',
       },
     ],
   },
@@ -68,7 +68,7 @@ export const faqGroups: FaqGroup[] = [
       },
       {
         q: 'What permissions does Swipr need?',
-        a: 'Only access to your photos, so it can show them to you and delete the ones you confirm. It doesn&rsquo;t ask for location, camera, contacts, microphone or internet. The <a href="/download/#permissions">download page</a> lists each permission by Android version.',
+        a: 'Only access to your photos and videos, so it can show them to you and delete the ones you confirm. It doesn&rsquo;t ask for location, camera, contacts, microphone or internet. The <a href="/download/#permissions">download page</a> lists each permission by Android version.',
       },
       {
         q: 'Can I give Swipr access to only some photos?',

@@ -79,10 +79,10 @@ class _PermissionGateState extends ConsumerState<PermissionGate> with WidgetsBin
             key: ValueKey('explainer-$blocked'),
             title: 'Let\'s clean up your camera roll',
             body: blocked
-                ? 'Swipr needs access to your photos to show them to you. '
+                ? 'Swipr needs access to your photos and videos to show them to you. '
                       'Open Settings and allow photo access, then come back.'
                 : 'Swipe right to keep, left to delete — like Tinder, but for photos.\n\n'
-                      'Swipr needs access to your photo library. Nothing is uploaded; '
+                      'Swipr needs access to your photos and videos. Nothing is uploaded; '
                       'everything stays on your device, and nothing is deleted without '
                       'your confirmation.',
             actionLabel: blocked ? 'Open Settings' : 'Allow photo access',

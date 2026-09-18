@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/format.dart';
 import '../core/providers.dart';
 import '../core/theme/app_theme.dart';
 import '../data/photo_repository.dart';
@@ -36,6 +37,7 @@ class PhotoImage extends ConsumerStatefulWidget {
     this.size = PhotoImageSize.grid,
     this.fit = BoxFit.cover,
     this.placeholderColor = AppColors.surfaceHigh,
+    this.showVideoBadge = true,
   }) : assert(asset != null || assetId != null);
 
   final AssetEntity? asset;
@@ -43,6 +45,9 @@ class PhotoImage extends ConsumerStatefulWidget {
   final PhotoImageSize size;
   final BoxFit fit;
   final Color placeholderColor;
+
+  /// Videos get a duration badge; turn it off where the caption already says so.
+  final bool showVideoBadge;
 
   @override
   ConsumerState<PhotoImage> createState() => _PhotoImageState();
@@ -123,9 +128,39 @@ class _PhotoImageState extends ConsumerState<PhotoImage> {
                   );
                 },
               ),
+            if (loaded != null && widget.showVideoBadge && loaded.$1?.type == AssetType.video)
+              Positioned(right: 6, bottom: 6, child: _VideoBadge(duration: loaded.$1!.videoDuration)),
           ],
         );
       },
+    );
+  }
+}
+
+/// "▶ 0:42" in the corner of a thumbnail.
+class _VideoBadge extends StatelessWidget {
+  const _VideoBadge({required this.duration});
+
+  final Duration duration;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.6), borderRadius: BorderRadius.circular(6)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.play_arrow_rounded, size: 12, color: Colors.white),
+            const SizedBox(width: 2),
+            Text(
+              formatDuration(duration),
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

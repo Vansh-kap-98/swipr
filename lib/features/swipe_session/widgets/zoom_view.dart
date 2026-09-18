@@ -7,6 +7,7 @@ import '../../../core/providers.dart';
 import '../../../data/photo_repository.dart';
 import '../../../shared_widgets/photo_image.dart';
 import '../../../shared_widgets/slide_motion.dart';
+import 'video_stage.dart';
 
 Future<void> showZoomView(BuildContext context, AssetEntity asset) {
   return Navigator.of(context).push(
@@ -40,7 +41,11 @@ class ZoomView extends ConsumerStatefulWidget {
 
 class _ZoomViewState extends ConsumerState<ZoomView> {
   final _transform = TransformationController();
-  late final Future<Uint8List?> _bytes = ref.read(photoRepositoryProvider).zoomImage(widget.asset);
+
+  bool get _isVideo => widget.asset.type == AssetType.video;
+
+  /// Photos get a sharper render fetched up front; videos don't need one.
+  late final Future<Uint8List?>? _bytes = _isVideo ? null : ref.read(photoRepositoryProvider).zoomImage(widget.asset);
 
   double _dismissDy = 0;
   bool _dragging = false;
@@ -94,36 +99,38 @@ class _ZoomViewState extends ConsumerState<ZoomView> {
               onInteractionUpdate: _onUpdate,
               onInteractionEnd: _onEnd,
               child: SizedBox.expand(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // The card image is already decoded, so the view is never
-                    // empty; the sharper full-resolution render lands on top.
-                    PhotoImage(
-                      asset: widget.asset,
-                      size: PhotoImageSize.card,
-                      fit: BoxFit.contain,
-                      placeholderColor: Colors.transparent,
-                    ),
-                    FutureBuilder<Uint8List?>(
-                      future: _bytes,
-                      builder: (context, snap) {
-                        final bytes = snap.data;
-                        if (bytes != null) {
-                          return Image.memory(
-                            bytes,
+                child: _isVideo
+                    ? VideoStage(asset: widget.asset)
+                    : Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          // The card image is already decoded, so the view is never
+                          // empty; the sharper full-resolution render lands on top.
+                          PhotoImage(
+                            asset: widget.asset,
+                            size: PhotoImageSize.card,
                             fit: BoxFit.contain,
-                            gaplessPlayback: true,
-                            frameBuilder: (context, child, frame, sync) =>
-                                frame == null && !sync ? const SizedBox.shrink() : child,
-                          );
-                        }
-                        if (snap.connectionState == ConnectionState.done) return const SizedBox.shrink();
-                        return const Align(alignment: Alignment(0, 0.9), child: SlideLoader());
-                      },
-                    ),
-                  ],
-                ),
+                            placeholderColor: Colors.transparent,
+                          ),
+                          FutureBuilder<Uint8List?>(
+                            future: _bytes,
+                            builder: (context, snap) {
+                              final bytes = snap.data;
+                              if (bytes != null) {
+                                return Image.memory(
+                                  bytes,
+                                  fit: BoxFit.contain,
+                                  gaplessPlayback: true,
+                                  frameBuilder: (context, child, frame, sync) =>
+                                      frame == null && !sync ? const SizedBox.shrink() : child,
+                                );
+                              }
+                              if (snap.connectionState == ConnectionState.done) return const SizedBox.shrink();
+                              return const Align(alignment: Alignment(0, 0.9), child: SlideLoader());
+                            },
+                          ),
+                        ],
+                      ),
               ),
             ),
           ),

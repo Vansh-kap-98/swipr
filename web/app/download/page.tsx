@@ -13,10 +13,11 @@ export const metadata: Metadata = {
 
 const permissions = [
   { permission: 'Photos (read)', when: 'Android 13+', why: 'To show your photos one at a time.' },
+  { permission: 'Videos (read)', when: 'Android 13+', why: 'To show videos in the same stack as your photos.' },
   {
     permission: 'Selected photos only',
     when: 'Android 14+',
-    why: 'Lets you share just some photos instead of your whole library.',
+    why: 'Lets you share just some items instead of your whole library.',
   },
   { permission: 'Storage (read)', when: 'Android 8–12', why: "Older Android versions' equivalent of photo access." },
   {
@@ -27,11 +28,17 @@ const permissions = [
   {
     permission: 'Photo library (read & write)',
     when: 'iPhone',
-    why: 'To show photos and delete the ones you confirm. Full or limited access both work.',
+    why: 'To show photos and videos, and delete the ones you confirm. Full or limited access both work.',
   },
 ];
 
 const whatsNew = [
+  'Videos are included now: they appear in the stack with their length, and play when you tap',
+  'The resume card can be swiped — right to carry on, left to dismiss it',
+  'Smoother swiping: photos are decoded before a card reaches the top',
+];
+
+const alreadyIn = [
   'Swipe right to keep, left to delete, with a live green/red preview',
   'Trash queue with restore and one-tap batch delete',
   'Multi-step undo within a session',
@@ -77,7 +84,7 @@ export default function DownloadPage() {
             Permissions, explained
           </h2>
           <p className="section__lead" data-reveal>
-            Swipr asks for access to your photos, nothing more. Here&rsquo;s exactly what it requests and why.
+            Swipr asks for access to your photos and videos, nothing more. Here&rsquo;s exactly what it requests and why.
           </p>
           <div className="table-wrap" data-reveal>
             <table className="perm-table">
@@ -100,7 +107,7 @@ export default function DownloadPage() {
             </table>
           </div>
           <p className="note" data-reveal>
-            <strong>Not requested:</strong> internet, location, camera, contacts, microphone, video or audio.
+            <strong>Not requested:</strong> internet, location, camera, contacts, microphone or audio files.
           </p>
         </div>
       </section>
@@ -112,6 +119,14 @@ export default function DownloadPage() {
           </h2>
           <ul className="check-list check-list--plain" data-reveal>
             {whatsNew.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="note" data-reveal>
+            <strong>Also in Swipr:</strong>
+          </p>
+          <ul className="check-list check-list--muted" data-reveal>
+            {alreadyIn.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>

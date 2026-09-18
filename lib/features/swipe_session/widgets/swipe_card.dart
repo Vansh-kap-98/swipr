@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/format.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/photo_repository.dart';
 import '../../../shared_widgets/photo_image.dart';
@@ -134,10 +135,18 @@ class _Caption extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
             ),
             const Spacer(),
-            Text(
-              '${asset.orientatedWidth}×${asset.orientatedHeight}',
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
-            ),
+            if (asset.type == AssetType.video) ...[
+              const Icon(Icons.play_circle_outline_rounded, size: 16, color: Colors.white70),
+              const SizedBox(width: 5),
+              Text(
+                formatDuration(asset.videoDuration),
+                style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+            ] else
+              Text(
+                '${asset.orientatedWidth}×${asset.orientatedHeight}',
+                style: const TextStyle(color: Colors.white70, fontSize: 12),
+              ),
             const SizedBox(width: 8),
             const Icon(Icons.zoom_out_map_rounded, size: 16, color: Colors.white70),
           ],
