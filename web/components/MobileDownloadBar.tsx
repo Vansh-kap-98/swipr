@@ -25,7 +25,8 @@ export function MobileDownloadBar() {
     // Scroll events already fire at most once per frame, and React ignores a
     // set to the same value — no extra throttling needed, and nothing here
     // depends on animation frames, which browsers pause in background tabs.
-    const onScroll = () => setShown(window.scrollY > 420);
+    // Appears as soon as the hero's own button starts scrolling away.
+    const onScroll = () => setShown(window.scrollY > 200);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);

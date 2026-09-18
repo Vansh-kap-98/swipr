@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { MobileDownloadBar } from '@/components/MobileDownloadBar';
-import { RevealController } from '@/components/Reveal';
 import { site, stores } from '@/lib/site';
 import { site as config } from '@/site.config';
 import './globals.css';
@@ -53,7 +52,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="main">{children}</main>
         <Footer />
         <MobileDownloadBar />
-        <RevealController />
       </body>
     </html>
   );
